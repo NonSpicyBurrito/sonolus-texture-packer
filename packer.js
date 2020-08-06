@@ -17,7 +17,12 @@ module.exports = (files, interpolation, callback) => {
             })
 
             if (sprites.length === files.length) {
-                sprites.sort((a, b) => b.width * b.height - a.width * a.height || b.width - a.width)
+                sprites.sort(
+                    (a, b) =>
+                        Math.max(b.width, b.height) - Math.max(a.width, a.height) ||
+                        b.width * b.height - a.width * a.height ||
+                        b.width - a.width
+                )
 
                 let size = 1
                 while (!pack(size, sprites)) {
@@ -49,6 +54,7 @@ module.exports = (files, interpolation, callback) => {
                     img.bitblt(texture, 0, img.height - 1, img.width, 1, sprite.x + 1, sprite.y + 1 + img.height)
                 })
 
+                outputSprites.sort((a, b) => a.id - b.id)
                 callback(PNG.sync.write(texture), { width: size, height: size, interpolation, sprites: outputSprites })
             }
         })
